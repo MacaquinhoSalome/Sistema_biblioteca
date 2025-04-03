@@ -9,9 +9,16 @@
 <body>
     <h1>Gestión de Usuarios 👤🐒</h1>
     <div class="container">
+        <!-- Mensaje dinámico -->
+        {% if mensaje %}
+        <div class="mensaje">
+            <p>{{ mensaje }}</p>
+        </div>
+        {% endif %}
+
         <!-- Formulario para agregar usuarios -->
         <h2>Registrar Nuevo Usuario</h2>
-        <form method="post" action="/usuarios">
+        <form method="post" action="/usuarios" autocomplete="off">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required><br><br>
             
@@ -28,18 +35,134 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Identificación</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí se renderizan los usuarios desde el backend -->
                 {% for usuario in usuarios %}
                 <tr>
                     <td>{{ usuario.nombre }}</td>
                     <td>{{ usuario.identificacion }}</td>
+                    <td>
+                        <button class="button" onclick="abrirModal('{{ usuario.nombre }}', '{{ usuario.identificacion }}')">Editar</button>
+                        <form method="post" action="/eliminar_usuario" style="display:inline;">
+                            <input type="hidden" name="nombre" value="{{ usuario.nombre }}">
+                            <button type="submit" class="button eliminar">Eliminar</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <!-- Modal para editar un usuario -->
+    <div id="modalEditar" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Editar Usuario</h2>
+            <form method="post" action="/editar_usuario" autocomplete="off" onsubmit="return validarEdicion()">
+                <label for="nombreModal">Nuevo Nombre:</label>
+                <input type="text" id="nombreModal" name="nuevo_nombre" required><br><br>
+                
+                <label for="identificacionModal">Nueva Identificación:</label>
+                <input type="text" id="identificacionModal" name="nueva_identificacion" required><br><br>
+                
+                <input type="hidden" id="nombreActual" name="nombre_actual">
+                
+                <button type="submit" class="button">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript para manejar el modal y las validaciones -->
+    <script>
+        function abrirModal(nombre, identificacion) {
+            // Rellenar los campos del modal con los datos del usuario
+            document.getElementById("nombreModal").value = nombre;
+            document.getElementById("identificacionModal").value = identificacion;
+            document.getElementById("nombreActual").value = nombre;
+            document.getElementById("modalEditar").style.display = "block";
+        }
+
+        function cerrarModal() {
+            // Cerrar el modal
+            document.getElementById("modalEditar").style.display = "none";
+        }
+
+        function validarEdicion() {
+            // Obtener los valores actuales y nuevos del formulario
+            const nuevoNombre = document.getElementById("nombreModal").value.trim();
+            const nombreActual = document.getElementById("nombreActual").value.trim();
+
+            // Verificar si el nuevo nombre ya existe en la tabla
+            const filas = document.querySelectorAll("tbody tr");
+            for (let fila of filas) {
+                const nombreExistente = fila.querySelector("td:nth-child(1)").innerText.trim();
+                if (nuevoNombre === nombreExistente && nuevoNombre !== nombreActual) {
+                    alert("El nombre ya existe. Por favor, elige otro.");
+                    return false; // Evitar el envío del formulario
+                }
+            }
+            return true; // Permitir el envío del formulario
+        }
+    </script>
+
+    <!-- Estilo básico para el modal -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .mensaje {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .button {
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .eliminar {
+            background-color: #DC3545;
+        }
+        .eliminar:hover {
+            background-color: #c82333;
+        }
+    </style>
 </body>
 </html>

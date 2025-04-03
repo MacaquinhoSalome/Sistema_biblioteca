@@ -9,6 +9,13 @@
 <body>
     <h1>Gestión de Préstamos 📖🐒</h1>
     <div class="container">
+        <!-- Mensaje dinámico -->
+        {% if mensaje %}
+        <div class="mensaje">
+            <p>{{ mensaje }}</p>
+        </div>
+        {% endif %}
+
         <!-- Formulario para registrar un préstamo -->
         <h2>Registrar Nuevo Préstamo</h2>
         <form method="post" action="/prestamos">
@@ -26,21 +33,91 @@
         <table>
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Usuario</th>
                     <th>Libro (ISBN)</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí se renderizan los préstamos desde el backend -->
                 {% for prestamo in prestamos %}
                 <tr>
-                    <td>{{ prestamo.usuario }}</td>
-                    <td>{{ prestamo.libro }}</td>
+                    <td>{{ prestamo.id }}</td>
+                    <td>{{ prestamo.usuario.nombre }}</td>
+                    <td>{{ prestamo.libro.isbn }}</td>
+                    <td>
+                        <button class="button" onclick="abrirModal('{{ prestamo.id }}', '{{ prestamo.usuario.nombre }}', '{{ prestamo.libro.isbn }}')">Editar</button>
+                        <form method="post" action="/eliminar_prestamo" style="display:inline;">
+                            <input type="hidden" name="prestamo_id" value="{{ prestamo.id }}">
+                            <button type="submit" class="button eliminar">Eliminar</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <!-- Modal para editar un préstamo -->
+    <div id="modalEditar" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Editar Préstamo</h2>
+            <form method="post" action="/editar_prestamo">
+                <input type="hidden" id="prestamo_id_modal" name="prestamo_id">
+                
+                <label for="nuevo_usuario">Nuevo Usuario:</label>
+                <input type="text" id="nuevo_usuario" name="nuevo_usuario" required><br><br>
+                
+                <label for="nuevo_libro">Nuevo Libro (ISBN):</label>
+                <input type="text" id="nuevo_libro" name="nuevo_libro" required><br><br>
+                
+                <button type="submit" class="button">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(id, usuario, libro) {
+            document.getElementById("prestamo_id_modal").value = id;
+            document.getElementById("nuevo_usuario").value = usuario;
+            document.getElementById("nuevo_libro").value = libro;
+            document.getElementById("modalEditar").style.display = "block";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalEditar").style.display = "none";
+        }
+    </script>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover {
+            color: black;
+            cursor: pointer;
+        }
+    </style>
 </body>
 </html>
-
