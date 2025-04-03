@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Préstamos 🐒</title>
+    <link rel="stylesheet" href="/static/css/estilos.css">
+</head>
+<body>
+    <h1>Gestión de Préstamos 📖🐒</h1>
+    <div class="container">
+        <!-- Formulario para registrar un préstamo -->
+        <h2>Registrar Nuevo Préstamo</h2>
+        <form method="post" action="/prestamos">
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" name="usuario" required><br><br>
+            
+            <label for="libro">Libro (ISBN):</label>
+            <input type="text" id="libro" name="libro" required><br><br>
+            
+            <button type="submit" class="button">Registrar Préstamo</button>
+        </form>
+
+        <!-- Lista de préstamos activos -->
+        <h2>Préstamos Activos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Libro (ISBN)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se renderizan los préstamos desde el backend -->
+                {% for prestamo in prestamos %}
+                <tr>
+                    <td>{{ prestamo.usuario }}</td>
+                    <td>{{ prestamo.libro }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+
