@@ -106,3 +106,16 @@ El "Sistema de Gestión de Biblioteca de Don Simian" representa una solución ef
 El uso de tecnologías como **FastAPI**, **SQLAlchemy** y una interfaz basada en **HTML**, **CSS** y **JavaScript** asegura un sistema dinámico, escalable y fácil de mantener. Además, las relaciones entre tablas en la base de datos refuerzan la consistencia de la información almacenada.
 
 Este sistema no solo simplifica las operaciones diarias de una biblioteca, sino que también fomenta una experiencia de usuario agradable gracias a una interfaz amigable y mensajes claros que guían al administrador en cada paso. Con una base sólida, este proyecto está preparado para escalar y adaptarse a futuras necesidades, siendo una herramienta invaluable para cualquier entorno bibliotecario.  
+
+
+
+## Referencias bibliograficas
+- Tiangolo, S. (2025). FastAPI: High performance, easy to learn, fast to code, ready for production. Recuperado de FastAPI.
+
+- Szalontay, P. (2024). Building a Production-Ready Python FastAPI Project Template. Recuperado de GetLazy.ai.
+
+- Bouchrika, I. (2025). 20 Best Library Management Software for 2025. Recuperado de Research.com.
+
+- Sharma, S. (2023). 7 Best Open Source Library Management Software. Recuperado de It's FOSS.
+
+- Forrester, R. (2025). Top 5 Library Management Software Solutions for 2025. Recuperado de Five.co.
