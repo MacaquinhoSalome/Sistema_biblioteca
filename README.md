@@ -1,21 +1,3 @@
-## Actividad 2 - Proyecto: Sistema de gestión de biblioteca
-
-Nombre
-Salome Ramirez Sanchez
-
-Cuarto Semestre
-
-
-Corporación Universitaria Iberoamericana
-
-Estructuras de Datos
-
-Docente (William Ruiz)
-
-Fecha (26 de Marzo del 2025)
-
-Bogotá D.C
-
 
 ## Introducción
 El presente proyecto, titulado "Sistema de Gestión de Biblioteca de Don Simian", ha sido desarrollado con el propósito de optimizar la administración de recursos bibliográficos a través de un sistema eficiente, creativo y fácil de usar. Este sistema integra la gestión de libros, usuarios y préstamos, permitiendo a los administradores llevar un control detallado sobre el inventario de libros, el registro de usuarios y el seguimiento de préstamos activos.
