@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/static/css/estilos.css">
 </head>
 <body>
+    {% include "partials/navbar.html" %}
+
     <h1>Gestión de Usuarios 👤🐒</h1>
     <div class="container">
         <!-- Mensaje dinámico -->
@@ -75,6 +77,9 @@
         </div>
     </div>
 
+    <div class="footer">
+        &copy; 2025 - Sistema de Biblioteca 🐒
+    </div>
     <!-- JavaScript para manejar el modal y las validaciones -->
     <script>
         function abrirModal(nombre, identificacion) {
@@ -163,5 +168,8 @@
             background-color: #c82333;
         }
     </style>
+
+
+
 </body>
 </html>
