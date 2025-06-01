@@ -69,6 +69,87 @@ Este informe detalla los procesos técnicos, las decisiones de diseño, las tecn
    - Las dependencias y configuraciones deben ser actualizadas regularmente.
 
 
+## Requerimientos del Sistema - Segunda Fase
+Esta sección describe los requerimientos funcionales y no funcionales implementados en la segunda fase del sistema de gestión de biblioteca, centrándose en la integración del árbol binario de búsqueda y la optimización de la administración de libros.
+
+## 1. Requerimientos Funcionales
+Estos requerimientos definen las funcionalidades específicas del sistema en esta fase.
+
+## - Gestión de Libros con Árbol Binario de Búsqueda (BST)
+
+- El sistema permite almacenar, buscar y eliminar libros utilizando un BST.
+
+- Se garantiza que los libros se organicen de manera ordenada por título dentro del árbol.
+
+- El BST facilita un recorrido en orden ascendente sin necesidad de ordenamiento adicional.
+
+## - Búsqueda de Libros Eficiente
+
+- Implementación de una ruta en FastAPI que permite consultar un libro por su título.
+
+- La búsqueda se realiza directamente en el árbol binario, mejorando la velocidad de respuesta.
+
+- Si el libro no existe, el sistema devuelve un mensaje indicando que "Libro no encontrado".
+
+## - Eliminación de Libros
+
+- Se desarrolla una función que elimina un libro tanto del BST como de la base de datos.
+
+- Si el libro no existe, el sistema muestra un mensaje de error en la interfaz.
+
+- Se maneja adecuadamente la eliminación de nodos con uno o dos hijos en el BST.
+
+## - Devolución de Libros
+
+- Se establece una interfaz donde el usuario ingresa su identificación y el ISBN del libro a devolver.
+
+- Se valida que exista un préstamo activo antes de procesar la devolución.
+
+- Al devolver el libro, se actualiza la base de datos y se confirma con un mensaje en la interfaz.
+
+## - Interfaz Mejorada para Usuarios
+
+- Se diseñan formularios para búsqueda de libros y devolución de préstamos con una estructura clara.
+
+- Se añade validación en JavaScript para evitar envíos de formularios vacíos.
+
+- Se optimizan los estilos en CSS para mejorar la accesibilidad y la experiencia de usuario.
+
+## 2. Requerimientos No Funcionales
+Estos requerimientos definen las características técnicas y operativas del sistema en la segunda fase.
+
+-  Eficiencia en Búsqueda y Eliminación
+
+- El BST garantiza un tiempo de búsqueda y eliminación óptimo con una complejidad de O(log n).
+
+- La implementación minimiza el acceso directo a la base de datos, reduciendo costos computacionales.
+
+## - Escalabilidad del Sistema
+
+- El árbol binario permite manejar grandes volúmenes de libros sin afectar el rendimiento.
+
+- Se deja abierta la posibilidad de mejorar la estructura con AVL o Red-Black Trees en futuras mejoras.
+
+## - Integración con FastAPI y Base de Datos
+
+- Se emplea FastAPI para gestionar rutas eficientes.
+
+- La conexión con la base de datos se optimiza para evitar cargas innecesarias de datos.
+
+- Se garantiza que la información de libros y préstamos esté sincronizada con el BST.
+
+## - Manejo de Errores y Validación
+
+- Se implementa un manejo de excepciones en la eliminación de libros, evitando errores inesperados.
+
+- Se validan los formularios en la interfaz para evitar envíos incorrectos o incompletos.
+
+## - Seguridad y Protección de Datos
+
+- Se garantiza que las operaciones de eliminación y búsqueda sean protegidas contra accesos incorrectos.
+
+- Se evita la exposición de datos sensibles en las respuestas de la API.
+
 ## NOTA: Se pueden visualizar las pruebas en el documento PDF PRUEBAS
 
 

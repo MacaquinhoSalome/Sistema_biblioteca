@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Devolución de Libros 🐒</title>
+    <link rel="stylesheet" href="/static/css/estilos.css">
+
+    <style>
+        body {
+            background-color: #f5f5dc; /* Beige */
+            font-family: Arial, sans-serif;
+            color: #5a3e1b; /* Café */
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #d4a017;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff8dc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .mensaje {
+            background-color: #e6ffed;
+            border-left: 6px solid #28a745;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #155724;
+        }
+
+
+    </style>
+</head>
+<body>
+    {% include "partials/navbar.html" %}
+
+
+    <h1>📚 Devolución de Libros</h1>
+
+    <div class="container">
+        {% if mensaje %}
+            <div class="mensaje">{{ mensaje }}</div>
+        {% endif %}
+
+        <form action="/devoluciones" method="post">
+            <label for="isbn">ISBN del libro:</label>
+            <input type="text" name="isbn" id="isbn" placeholder="Ej: 9781234567890" required>
+
+            <label for="usuario_id">Identificación del usuario:</label>
+            <input type="number" name="usuario_id" id="usuario_id" placeholder="Ej: 123456" required>
+
+            <button type="submit">Devolver libro</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 - Sistema de Biblioteca 🐒
+    </div>
+
+    <script>
+        setTimeout(function() {
+            if (window.location.search.includes("mensaje=")) {
+                window.location.href = "/devoluciones";
+            }
+        }, 5000);
+    </script>
+    
+</body>
+</html>

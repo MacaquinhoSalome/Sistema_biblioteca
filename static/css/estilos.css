@@ -62,3 +62,43 @@ h1 {
 .eliminar:hover {
     background-color: #c82333;
 }
+
+.footer {
+    text-align: center;
+    font-size: 0.9em;
+    color: #999;
+    margin-top: 60px;
+}
+
+
+
+.navbar {
+    background-color: #d4a017;
+    padding: 10px 20px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    font-size: 1.2em;
+    text-decoration: none;
+    color: #5a3e1b;
+}
+
+.navbar-links a {
+    margin-left: 15px;
+    text-decoration: none;
+    color: #5a3e1b;
+    font-weight: normal;
+}
+
+.navbar-links a:hover {
+    text-decoration: underline;
+}

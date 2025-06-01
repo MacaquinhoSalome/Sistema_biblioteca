@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+        <meta charset="UTF-8">
+        <title>Búsqueda de Libros 🐒</title>
+        <link rel="stylesheet" href="/static/css/estilos.css">
+    
+        <style>
+            body {
+                background-color: #f5f5dc; /* Beige */
+                font-family: Arial, sans-serif;
+                color: #5a3e1b; /* Café */
+                margin: 0;
+                padding: 0;
+            }
+    
+            h1 {
+                color: #d4a017;
+                text-align: center;
+                margin-top: 40px;
+            }
+    
+            .container {
+                max-width: 600px;
+                margin: 40px auto;
+                padding: 20px;
+                background-color: #fff8dc;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+    
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+    
+            input[type="text"],
+            input[type="number"] {
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+    
+            button {
+                padding: 10px;
+                background-color: #007BFF;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+    
+            button:hover {
+                background-color: #0056b3;
+            }
+    
+            .mensaje {
+                background-color: #e6ffed;
+                border-left: 6px solid #28a745;
+                padding: 12px 20px;
+                margin-bottom: 20px;
+                border-radius: 4px;
+                font-weight: bold;
+                color: #155724;
+            }
+    
+    
+        </style>
+</head>
+<body>
+    {% include "partials/navbar.html" %}
+    <div class="container">
+        {% if mensaje %}
+        <div class="mensaje">{{ mensaje }}</div>
+        {% endif %}
+        <h1>Buscar Libro</h1>
+        <form method="get" action="/busquedas/libros">
+            <label for="titulo">Título del libro:</label>
+            <input type="text" id="titulo" name="titulo" required>
+            <button type="submit">Buscar</button>
+        </form>
+
+        
+
+        <!-- Mostrar los detalles del libro solo si se encontró -->
+        {% if libro %}
+            <h2>Información del libro</h2>
+            <p><strong>Título:</strong> {{ libro.titulo }}</p>
+            <p><strong>Autor:</strong> {{ libro.autor }}</p>
+            <p><strong>Editorial:</strong> {{ libro.editorial }}</p>
+            <p><strong>Año:</strong> {{ libro.anio }}</p>
+            <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
+
+            <!-- Botón para eliminar el libro -->
+            <form method="post" action="/eliminar_libro_busqueda" style="margin-top: 20px;">
+                <input type="hidden" name="titulo" value="{{ libro.titulo }}">
+                <button type="submit" style="background-color: #DC3545; color: white;">Eliminar Libro</button>
+            </form>
+            
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        &copy; 2025 - Sistema de Biblioteca 🐒
+    </div>
+
+    <script>
+        setTimeout(function() {
+            if (window.location.search.includes("mensaje=")) {
+                window.location.href = "/devoluciones";
+            }
+        }, 5000);
+    </script>
+
+</body>
+</html>

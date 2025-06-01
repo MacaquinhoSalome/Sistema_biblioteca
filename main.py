@@ -1,3 +1,4 @@
+from fastapi import Request
 from fastapi import Depends, FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -8,8 +9,13 @@ from sqlalchemy.orm import Session
 from config.database import SessionLocal
 from crud import *
 from models.Models import Prestamo, Usuario, Libro
+from arboles import ArbolBinarioBusqueda
+
+
 # Crear la app FastAPI
 app = FastAPI()
+
+
 
 # Configurar Jinja2 para servir plantillas
 templates = Jinja2Templates(directory="templates")
@@ -35,6 +41,37 @@ def insert_libro(
     titulo: str, autor: str, isbn: str, editorial: int, anio: int, db: Session = Depends(get_db)
 ):
     return crear_libro(db, titulo, autor, isbn, editorial, anio)
+
+
+@app.on_event("startup")
+def inicializar_arbol():
+    app.state.libros_arbol = ArbolBinarioBusqueda()
+    db = SessionLocal()
+    libros = db.query(Libro).all()
+    for libro in libros:
+        app.state.libros_arbol.insertar(libro.titulo, libro)
+    db.close()
+
+
+def reconstruir_arbol(app: FastAPI):
+    arbol = ArbolBinarioBusqueda()
+    db = SessionLocal()
+    libros = db.query(Libro).all()
+    for libro in libros:
+        arbol.insertar(libro.titulo, libro)
+    db.close()
+
+    app.state.libros_arbol = arbol
+
+"""
+Cuando inicias la aplicación:
+
+- Crea un árbol binario de búsqueda donde los libros se organizan automáticamente por sus títulos.
+
+- Permite buscar libros de manera eficiente utilizando el título como criterio principal.
+
+- Prepara la aplicación para que las consultas relacionadas con búsquedas sean rápidas y escalables, ya que el árbol optimiza la operación de búsqueda en comparación con recorrer una lista completa.
+"""
 
 
 # Ruta para la página de inicio
@@ -72,6 +109,7 @@ def agregar_libro(
 
     # Crear el nuevo libro si no existe
     nuevo_libro = crear_libro(db, titulo, autor, isbn, editorial, anio)
+    reconstruir_arbol(request.app)
 
     #return templates.TemplateResponse("libros.html", {"request": request})
     return templates.TemplateResponse(
@@ -111,6 +149,23 @@ def eliminar_libro(titulo: str = Form(...), db: Session = Depends(get_db)):
         db.delete(libro)
         db.commit()
     return RedirectResponse(url="/libros", status_code=303)
+
+@app.post("/eliminar_libro_busqueda")
+def eliminar_libro(
+    titulo: str = Form(...),
+    request: Request = None,  
+    db: Session = Depends(get_db)
+):
+    libro = db.query(Libro).filter(Libro.titulo == titulo).first()
+    if libro:
+        db.delete(libro)
+        db.commit()
+        arbol = request.app.state.libros_arbol
+        arbol.eliminar(titulo)  
+
+    return templates.TemplateResponse("busquedas.html", {"request": request, "libros": libros, "mensaje": "¡ Libro eliminado correctamente !"})
+    
+
 
 
 
@@ -351,3 +406,85 @@ leer en pantalla -- select
 eliminar -- delete
 
 """
+
+#Segunda Fase, ARBOLES
+
+#Ruta para busquedas
+@app.get("/busquedas/libros", response_class=HTMLResponse)
+def buscar_libro(request: Request, titulo: str = None):
+    mensaje = None
+    libro = None
+
+    if titulo:
+        arbol = request.app.state.libros_arbol  
+        libro = arbol.buscar(titulo)
+        print(libro)
+        if libro:
+            mensaje = "¡Libro encontrado!"
+        else:
+            mensaje = "Libro no encontrado"
+
+    return templates.TemplateResponse(
+        "busquedas.html",
+        {"request": request, "libro": libro, "mensaje": mensaje}
+    )
+
+
+
+#devoluciones
+@app.get("/devoluciones", response_class=HTMLResponse)
+def devoluciones_inicio(request: Request, mensaje: str = None):
+    response = templates.TemplateResponse("devoluciones.html", {
+        "request": request,
+        "mensaje": mensaje
+    })
+    return response
+
+@app.post("/devoluciones")
+def devolver_libro(
+    isbn: str = Form(...),
+    usuario_id: str = Form(...),      
+    request: Request = None,
+    db: Session = Depends(get_db)
+):
+    libro = db.query(Libro).filter(Libro.isbn == isbn).first()
+    persona = db.query(Usuario).filter(Usuario.identificacion == usuario_id).first()
+
+    if not libro:
+            return templates.TemplateResponse(
+        "devoluciones.html",
+        {"request": request, "mensaje": f"Libro {isbn} no encontrado"}
+    )
+
+    try:
+        prestamo = db.query(Prestamo).filter(
+            Prestamo.usuario_id == persona.id,
+            Prestamo.libro_id == libro.id
+        ).first()
+    except:
+        return templates.TemplateResponse(
+        "devoluciones.html",
+        {"request": request, "mensaje": "Identificación no encontrada en el sistema"}
+    )
+
+    if not prestamo:
+        return templates.TemplateResponse(
+        "devoluciones.html",
+        {"request": request, "mensaje": "No se encontró un préstamo activo de este libro para el usuario."}
+    )
+
+    db.delete(prestamo)
+    db.commit()
+    
+    #rbol = request.app.state.libros_arbol
+    #arbol.insertar(libro.titulo, libro) 
+    return templates.TemplateResponse(
+        "devoluciones.html",
+        {"request": request, "libro": libro, "mensaje": f"Libro ha sido devuelto con exito"}
+    )
+
+
+
+
+
+
