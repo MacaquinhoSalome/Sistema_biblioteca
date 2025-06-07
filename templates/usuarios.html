@@ -11,51 +11,62 @@
 
     <h1>Gestión de Usuarios 👤🐒</h1>
     <div class="container">
-        <!-- Mensaje dinámico -->
-        {% if mensaje %}
-        <div class="mensaje">
-            <p>{{ mensaje }}</p>
+    <!-- Mensaje dinámico -->
+    {% if mensaje %}
+    <div class="mensaje">
+        <p>{{ mensaje }}</p>
+    </div>
+    {% endif %}
+
+    <div class="layout-container">
+        <!-- Columna izquierda -->
+        <div class="left-column">
+            <!-- Formulario -->
+            <section class="form-section">
+                <h2>Registrar Nuevo Usuario</h2>
+                <form method="post" action="/usuarios" autocomplete="off">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                    <label for="identificacion">Identificación:</label>
+                    <input type="text" id="identificacion" name="identificacion" required>
+                    <button type="submit" class="button">Registrar Usuario</button>
+                </form>
+            </section>
+
+            <!-- Tabla usuarios -->
+            <section class="table-section">
+                <h2>Usuarios Registrados</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Identificación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td><a href="#" onclick="cargarGrafoPorUsuario('{{ usuario.nombre }}'); return false;">{{ usuario.nombre }}</a></td>
+                            <td>{{ usuario.identificacion }}</td>
+                            <td>
+                                <button class="button" onclick="abrirModal('{{ usuario.nombre }}', '{{ usuario.identificacion }}')">Editar</button>
+                                <form method="post" action="/eliminar_usuario" style="display:inline;">
+                                    <input type="hidden" name="nombre" value="{{ usuario.nombre }}">
+                                    <button type="submit" class="button eliminar">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
         </div>
-        {% endif %}
 
-        <!-- Formulario para agregar usuarios -->
-        <h2>Registrar Nuevo Usuario</h2>
-        <form method="post" action="/usuarios" autocomplete="off">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required><br><br>
-            
-            <label for="identificacion">Identificación:</label>
-            <input type="text" id="identificacion" name="identificacion" required><br><br>
-            
-            <button type="submit" class="button">Registrar Usuario</button>
-        </form>
-
-        <!-- Lista de usuarios registrados -->
-        <h2>Usuarios Registrados</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Identificación</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for usuario in usuarios %}
-                <tr>
-                    <td>{{ usuario.nombre }}</td>
-                    <td>{{ usuario.identificacion }}</td>
-                    <td>
-                        <button class="button" onclick="abrirModal('{{ usuario.nombre }}', '{{ usuario.identificacion }}')">Editar</button>
-                        <form method="post" action="/eliminar_usuario" style="display:inline;">
-                            <input type="hidden" name="nombre" value="{{ usuario.nombre }}">
-                            <button type="submit" class="button eliminar">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- Columna derecha -->
+        <div class="right-column">
+            <div id="cy"></div>
+        </div>
     </div>
 
     <!-- Modal para editar un usuario -->
@@ -153,7 +164,7 @@
         .button {
             margin: 5px;
             padding: 5px 10px;
-            background-color: #007BFF;
+            background-color: #d4a017;
             color: white;
             border: none;
             cursor: pointer;
@@ -162,10 +173,54 @@
             background-color: #0056b3;
         }
         .eliminar {
-            background-color: #DC3545;
+            background-color: #d4a017;
         }
         .eliminar:hover {
             background-color: #c82333;
+        }
+        
+        .layout-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 3em;
+            margin-top: 2em;
+            flex-wrap: wrap;
+        }
+
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2em;
+            min-width: 300px;
+        }
+
+        .right-column {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 320px;
+        }
+
+        #cy {
+            width: 500px;
+            height: 500px;
+            border: 1px solid #ccc;
+            background-color: #fdfdfd;
+        }
+
+        form input[type="text"] {
+            display: block;
+            width: 100%;
+            max-width: 400px; 
+            margin-bottom: 0.5em;
+            padding: 5px;
+        }
+
+        form button {
+            margin-top: 0.5em;
         }
     </style>
 
@@ -173,3 +228,102 @@
 
 </body>
 </html>
+
+<script src="https://unpkg.com/cytoscape@3.19.0/dist/cytoscape.min.js"></script>
+
+<script>
+    fetch("/grafo")
+      .then(res => res.json())
+      .then(data => {
+        const elements = [];
+    
+        data.nodes.forEach(n => {
+            elements.push({ data: { id: n.id, label: n.label } });
+        });
+    
+        data.links.forEach(e => {
+            elements.push({ data: { source: e.source, target: e.target } });
+        });
+    
+        cytoscape({
+            container: document.getElementById('cy'),
+            elements: elements,
+            style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'label': 'data(label)',
+                        'background-color': '#0074D9'
+                    }
+                },
+                {
+                    selector: 'edge',
+                    style: {
+                        'width': 2,
+                        'line-color': '#ccc'
+                    }
+                }
+            ],
+            layout: {
+                name: 'cose'
+            }
+        });
+
+    });
+
+let cy; // guardamos el grafo aquí
+
+    function inicializarGrafo(data) {
+        const elements = [];
+
+        data.nodes.forEach(n => {
+            elements.push({ data: { id: n.id, label: n.label } });
+        });
+
+        data.links.forEach(e => {
+            elements.push({ data: { source: e.source, target: e.target } });
+        });
+
+        if (cy) {
+            cy.destroy(); // eliminar grafo anterior
+        }
+
+        cy = cytoscape({
+            container: document.getElementById('cy'),
+            elements: elements,
+            style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'label': 'data(label)',
+                        'background-color': '#0074D9'
+                    }
+                },
+                {
+                    selector: 'edge',
+                    style: {
+                        'width': 2,
+                        'line-color': '#ccc'
+                    }
+                }
+            ],
+            layout: {
+                name: 'cose'
+            }
+        });
+    }
+
+    // Carga inicial del grafo completo
+    fetch("/grafo")
+        .then(res => res.json())
+        .then(data => inicializarGrafo(data));
+
+    // Función que se llama al hacer clic en el nombre
+    function cargarGrafoPorUsuario(nombre) {
+        fetch(`/grafo_usuario/${encodeURIComponent(nombre)}`)
+            .then(res => res.json())
+            .then(data => inicializarGrafo(data))
+            .catch(err => console.error("Error cargando grafo:", err));
+    }
+
+</script>

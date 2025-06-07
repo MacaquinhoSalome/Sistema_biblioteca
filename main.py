@@ -10,6 +10,8 @@ from config.database import SessionLocal
 from crud import *
 from models.Models import Prestamo, Usuario, Libro
 from arboles import ArbolBinarioBusqueda
+from networkx.readwrite import json_graph
+import networkx as nx
 
 
 # Crear la app FastAPI
@@ -482,9 +484,59 @@ def devolver_libro(
         "devoluciones.html",
         {"request": request, "libro": libro, "mensaje": f"Libro ha sido devuelto con exito"}
     )
+"""
+@app.get("/grafo_usuario")
+def construir_grafo_usuario(db: Session):
+    G = nx.DiGraph()
+    usuarios = db.query(Usuario).all()
+    for usuario in usuarios:
+        G.add_node(f"U{usuario.id}", label=usuario.nombre, tipo="usuario")
+    data = json_graph.node_link_data(G)
+    print("hola")
+    return data 
+"""
+
+def construir_grafo(db: Session):
+    G = nx.DiGraph()
+    # Nodos de usuarios
+    usuarios = db.query(Usuario).all()
+    for usuario in usuarios:
+        G.add_node(f"U{usuario.id}", label=usuario.nombre, tipo="usuario")
+    
+    # Nodos de libros
+    libros = db.query(Libro).all()
+    for libro in libros:
+        G.add_node(f"L{libro.id}", label=libro.titulo, tipo="libro")
+    
+    # Aristas: prestamos
+    prestamos = db.query(Prestamo).all()
+    for prestamo in prestamos:
+        G.add_edge(f"U{prestamo.usuario_id}", f"L{prestamo.libro_id}")
+    
+    return G
 
 
+@app.get("/grafo")
+def obtener_grafo(db: Session = Depends(get_db)):
+    G = construir_grafo(db)
+    data = json_graph.node_link_data(G) 
+    return data
 
+@app.get("/grafo_usuario/{nombre}")
+def grafo_usuario(nombre: str, db: Session = Depends(get_db)):
+    usuario = db.query(Usuario).filter(Usuario.nombre == nombre).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
+    G = nx.DiGraph()
+    G.add_node(f"U{usuario.id}", label=usuario.nombre, tipo="usuario")
 
+    prestamos = db.query(Prestamo).filter(Prestamo.usuario_id == usuario.id).all()
+    libro_ids = [p.libro_id for p in prestamos]
 
+    libros = db.query(Libro).filter(Libro.id.in_(libro_ids)).all()
+    for libro in libros:
+        G.add_node(f"L{libro.id}", label=libro.titulo, tipo="libro")
+        G.add_edge(f"U{usuario.id}", f"L{libro.id}")
+
+    return json_graph.node_link_data(G)
