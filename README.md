@@ -161,14 +161,74 @@ En el corazón del sistema está **Don Simian**, un carismático mono gestor que
 
 Cada aspecto visual y narrativo del proyecto, desde los colores hasta las funcionalidades, refleja el espíritu juguetón pero eficiente de Don Simian. Esta integración creativa convierte al sistema en más que una simple herramienta: es una experiencia interactiva diseñada para ser funcional, cautivadora y agradable para los usuarios.
 
+------------------------------------------------------------------
+Requerimientos del Sistema gestion de  biblioteca de don simian - Tercera Fase
+1. Requerimientos Funcionales
+1.1. Gestión de Datos en SQLite
 
-## Conclusión
+El sistema debe almacenar información sobre libros, usuarios y préstamos en una base de datos SQLite.
 
-El "Sistema de Gestión de Biblioteca de Don Simian" representa una solución eficiente y moderna para administrar los recursos bibliográficos de manera estructurada. Este proyecto integra funcionalidades clave como la gestión de libros, usuarios y préstamos, proporcionando una interfaz intuitiva y herramientas robustas para garantizar la integridad de los datos.
+Debe permitir la creación, actualización, eliminación y consulta de registros en cada tabla.
 
-El uso de tecnologías como **FastAPI**, **SQLAlchemy** y una interfaz basada en **HTML**, **CSS** y **JavaScript** asegura un sistema dinámico, escalable y fácil de mantener. Además, las relaciones entre tablas en la base de datos refuerzan la consistencia de la información almacenada.
+Las consultas de libros y usuarios deben ejecutarse con filtros y criterios definidos para mejorar la eficiencia.
 
-Este sistema no solo simplifica las operaciones diarias de una biblioteca, sino que también fomenta una experiencia de usuario agradable gracias a una interfaz amigable y mensajes claros que guían al administrador en cada paso. Con una base sólida, este proyecto está preparado para escalar y adaptarse a futuras necesidades, siendo una herramienta invaluable para cualquier entorno bibliotecario.  
+1.2. Implementación de Grafos
+
+El sistema debe integrar una estructura de grafo dirigido para representar las relaciones entre usuarios y libros.
+
+Se debe permitir la inserción de nodos (usuarios y libros) y aristas (préstamos).
+
+Las operaciones de eliminación deben actualizar tanto la base de datos como el grafo de manera sincronizada.
+
+Los usuarios deben poder buscar relaciones entre libros y usuarios de forma eficiente.
+
+Se debe generar un análisis de popularidad basado en la estructura del grafo.
+
+1.3. Búsqueda Avanzada en el Sistema
+
+La interfaz debe permitir búsquedas de préstamos activos mediante consultas en el grafo.
+
+Los resultados deben ser presentados en una interfaz clara y accesible.
+
+Los usuarios deben poder acceder a recomendaciones basadas en relaciones dentro del grafo.
+
+1.4. Administración de Préstamos y Devoluciones
+
+Cuando un préstamo se registra, debe reflejarse en el grafo y en la base de datos.
+
+Al realizar una devolución, se debe eliminar la conexión entre usuario y libro en ambas estructuras.
+
+La interfaz debe notificar al usuario los cambios realizados en tiempo real.
+
+2. Requerimientos No Funcionales
+2.1. Rendimiento y Escalabilidad
+
+El sistema debe realizar consultas en SQLite y en el grafo en menos de un segundo para garantizar eficiencia.
+
+La estructura de datos utilizada debe permitir manejar grandes volúmenes de información sin pérdida de rendimiento.
+
+2.2. Seguridad y Consistencia
+
+Se deben implementar restricciones en la base de datos para evitar duplicidad de registros.
+
+Los cambios en préstamos y devoluciones deben estar sincronizados correctamente para evitar inconsistencias en los datos.
+
+2.3. Usabilidad e Interfaz
+
+La interfaz debe ser intuitiva, con opciones claras para que los usuarios gestionen libros y préstamos.
+
+La navegación debe seguir un diseño que facilite el acceso a las funciones principales sin necesidad de configuraciones avanzadas.
+
+2.4. Mantenimiento y Expansión
+
+La estructura del sistema debe permitir futuras actualizaciones, como la inclusión de análisis avanzados sobre tendencias de préstamos.
+
+La documentación debe ser clara para facilitar el mantenimiento y la incorporación de mejoras en futuras versiones.
+
+
+##Conclusión General
+Este sistema bibliotecario ahora es rápido, robusto y fácil de usar, integrando lo mejor de estructuras de datos y modelos matemáticos para optimizar la gestión de préstamos. La incorporación de grafos ha transformado el proceso de consulta en una experiencia más eficiente, permitiendo mejorar la búsqueda y administración de usuarios dentro de la biblioteca.
+Con esta versión final, el sistema no solo cumple con los objetivos académicos del proyecto, sino que también representa una solución tecnológica lista para ser ampliada en futuros desarrollos. Las siguientes mejoras podrían incluir sistemas de recomendación basados en patrones de préstamo e integración con visualización gráfica de los datos.
 
 
 
